@@ -64,6 +64,7 @@ class Session(object):
         config = app.config.copy()
         config.setdefault('SESSION_TYPE', 'null')
         config.setdefault('SESSION_USE_SIGNER', False)
+        config.setdefault('SESSION_SIGNER_TYPE', 'hmac_sha1')
         config.setdefault('SESSION_KEY_PREFIX', 'session:')
         config.setdefault('SESSION_REDIS', None)
         config.setdefault('SESSION_MEMCACHED', None)
@@ -80,7 +81,7 @@ class Session(object):
         if config['SESSION_TYPE'] == 'redis':
             session_interface = RedisSessionInterface(
                 config['SESSION_REDIS'], config['SESSION_KEY_PREFIX'],
-                config['SESSION_USE_SIGNER'])
+                config['SESSION_USE_SIGNER'], config['SESSION_SIGNER_TYPE'])
         elif config['SESSION_TYPE'] == 'memcached':
             session_interface = MemcachedSessionInterface(
                 config['SESSION_MEMCACHED'], config['SESSION_KEY_PREFIX'],

@@ -60,7 +60,7 @@ class SqlAlchemySession(ServerSideSession):
 
 
 
-sha256_digest_method = staticmethod(hashlib.sha256)
+sha256_digest_method = hashlib.sha256
 
 
 class SessionInterface(FlaskSessionInterface):
@@ -75,11 +75,11 @@ class SessionInterface(FlaskSessionInterface):
                       key_derivation='hmac', digest_method=sha256_digest_method)
 
     signers = {
-        'hmac-sha1': _get_signer_hmac_sha1,
-        'hmac-sha256': _get_signer_hmac_sha256,
+        'hmac_sha1': _get_signer_hmac_sha1,
+        'hmac_sha256': _get_signer_hmac_sha256,
     }
 
-    def __init__(self, signer_type='hmac-sha1'):
+    def __init__(self, signer_type='hmac_sha1'):
         self._signer_method = self.signers[signer_type]
 
     def _generate_sid(self):
