@@ -90,17 +90,19 @@ class Session(object):
             session_interface = FileSystemSessionInterface(
                 config['SESSION_FILE_DIR'], config['SESSION_FILE_THRESHOLD'],
                 config['SESSION_FILE_MODE'], config['SESSION_KEY_PREFIX'],
-                config['SESSION_USE_SIGNER'])
+                config['SESSION_USE_SIGNER'], config['SESSION_SIGNER_TYPE'])
         elif config['SESSION_TYPE'] == 'mongodb':
             session_interface = MongoDBSessionInterface(
                 config['SESSION_MONGODB'], config['SESSION_MONGODB_DB'],
                 config['SESSION_MONGODB_COLLECT'],
-                config['SESSION_KEY_PREFIX'], config['SESSION_USE_SIGNER'])
+                config['SESSION_KEY_PREFIX'], config['SESSION_USE_SIGNER'],
+                config['SESSION_SIGNER_TYPE'])
         elif config['SESSION_TYPE'] == 'sqlalchemy':
             session_interface = SqlAlchemySessionInterface(
                 app, config['SESSION_SQLALCHEMY'],
                 config['SESSION_SQLALCHEMY_TABLE'],
-                config['SESSION_KEY_PREFIX'], config['SESSION_USE_SIGNER'])
+                config['SESSION_KEY_PREFIX'], config['SESSION_USE_SIGNER'],
+                config['SESSION_SIGNER_TYPE'])
         else:
             session_interface = NullSessionInterface()
 
