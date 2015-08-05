@@ -59,18 +59,20 @@ class SqlAlchemySession(ServerSideSession):
     pass
 
 
+
+sha256_digest_method = staticmethod(hashlib.sha256)
+
+
 class SessionInterface(FlaskSessionInterface):
 
-    def _get_signer_hmac_sha1(self, app):
+    def _get_signer_hmac_sha1(app):
         return Signer(app.secret_key, salt='flask-session',
                       key_derivation='hmac')
 
-    sha256_digest_method = staticmethod(hashlib.sha256)
-
-    def _get_signer_hmac_sha256(self, app):
+    def _get_signer_hmac_sha256(app):
         # https://github.com/mitsuhiko/itsdangerous/blob/0.24/itsdangerous.py#L255-L269
         return Signer(app.secret_key, salt='flask-session',
-                      key_derivation='hmac', digest_method=self.sha256_digest_method)
+                      key_derivation='hmac', digest_method=sha256_digest_method)
 
     signers = {
         'hmac-sha1': _get_signer_hmac_sha1,
