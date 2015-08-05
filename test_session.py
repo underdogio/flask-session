@@ -142,7 +142,7 @@ class FlaskSessionTestCase(unittest.TestCase):
         Session(app)
         @app.route('/set', methods=['POST'])
         def set():
-            # flask.session['value'] = flask.request.form['value']
+            flask.session['value'] = flask.request.form['value']
             return 'value set'
         @app.route('/get')
         def get():

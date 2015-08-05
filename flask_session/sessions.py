@@ -10,7 +10,6 @@
 """
 import time
 from datetime import datetime
-import hashlib
 from uuid import uuid4
 try:
     import cPickle as pickle
@@ -59,28 +58,7 @@ class SqlAlchemySession(ServerSideSession):
     pass
 
 
-
-sha256_digest_method = staticmethod(hashlib.sha256)
-
-
 class SessionInterface(FlaskSessionInterface):
-
-    def _get_signer_hmac_sha1(app):
-        return Signer(app.secret_key, salt='flask-session',
-                      key_derivation='hmac')
-
-    def _get_signer_hmac_sha256(app):
-        # https://github.com/mitsuhiko/itsdangerous/blob/0.24/itsdangerous.py#L255-L269
-        return Signer(app.secret_key, salt='flask-session',
-                      key_derivation='hmac', digest_method=sha256_digest_method)
-
-    signers = {
-        'hmac-sha1': _get_signer_hmac_sha1,
-        'hmac-sha256': _get_signer_hmac_sha256,
-    }
-
-    def __init__(self, signer_type='hmac-sha1'):
-        self._signer_method = self.signers[signer_type]
 
     def _generate_sid(self):
         return str(uuid4())
@@ -88,7 +66,8 @@ class SessionInterface(FlaskSessionInterface):
     def _get_signer(self, app):
         if not app.secret_key:
             return None
-        return self._signer_method(app)
+        return Signer(app.secret_key, salt='flask-session',
+                      key_derivation='hmac')
 
 
 class NullSessionInterface(SessionInterface):
@@ -113,14 +92,13 @@ class RedisSessionInterface(SessionInterface):
     serializer = pickle
     session_class = RedisSession
 
-    def __init__(self, redis, key_prefix, use_signer=False, *args, **kwargs):
+    def __init__(self, redis, key_prefix, use_signer=False):
         if redis is None:
             from redis import Redis
             redis = Redis()
         self.redis = redis
         self.key_prefix = key_prefix
         self.use_signer = use_signer
-        super(RedisSessionInterface, self).__init__(*args, **kwargs)
 
     def open_session(self, app, request):
         sid = request.cookies.get(app.session_cookie_name)
