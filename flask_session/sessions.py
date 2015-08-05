@@ -59,28 +59,26 @@ class SqlAlchemySession(ServerSideSession):
     pass
 
 
+class SignerCollection(object):
+    sha256_digest_method = staticmethod(hashlib.sha256)
 
-sha256_digest_method = hashlib.sha256
-
-
-class SessionInterface(FlaskSessionInterface):
-
-    def _get_signer_hmac_sha1(app):
+    @classmethod
+    def hmac_sha1(cls, app):
         return Signer(app.secret_key, salt='flask-session',
                       key_derivation='hmac')
 
-    def _get_signer_hmac_sha256(app):
+    @classmethod
+    def hmac_sha256(cls, app):
         # https://github.com/mitsuhiko/itsdangerous/blob/0.24/itsdangerous.py#L255-L269
         return Signer(app.secret_key, salt='flask-session',
-                      key_derivation='hmac', digest_method=sha256_digest_method)
+                      key_derivation='hmac', digest_method=cls.sha256_digest_method)
 
-    signers = {
-        'hmac_sha1': _get_signer_hmac_sha1,
-        'hmac_sha256': _get_signer_hmac_sha256,
-    }
 
+class SessionInterface(FlaskSessionInterface):
     def __init__(self, signer_type='hmac_sha1'):
-        self._signer_method = self.signers[signer_type]
+        if not hasattr(SignerCollection, signer_type):
+            raise AssertionError('Signer %s could not be found. Please use a valid signer_type' % signer_type)
+        self._signer_method = getattr(SignerCollection, signer_type)
 
     def _generate_sid(self):
         return str(uuid4())
