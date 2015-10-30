@@ -124,7 +124,10 @@ class RedisSessionInterface(SessionInterface):
         return self.session_class(sid=sid)
 
     def destroy(self, session):
+        # Delete from our session store
         self.redis.delete(self.key_prefix + session.sid)
+
+        # Remove `sid` so `save_session` knows to delete the cookie
         session.sid = None
 
     def regenerate(self, session):
