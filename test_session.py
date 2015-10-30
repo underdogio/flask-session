@@ -46,6 +46,10 @@ class FlaskSessionTestCase(unittest.TestCase):
         def destroy():
             app.session_interface.destroy(flask.session)
             return 'session destroyed'
+        @app.route('/regenerate', methods=['POST'])
+        def regenerate():
+            app.session_interface.regenerate(flask.session)
+            return 'session regenerated'
         @app.errorhandler(500)
         def errorhandler_500(exc):
             raise exc
@@ -64,9 +68,23 @@ class FlaskSessionTestCase(unittest.TestCase):
         c.post('/destroy')
         self.assertNotIn('session', self._get_cookie_dict(c))
 
-        # Verify our cookie was erased from the underlying store
+        # Verify our session was erased from the underlying store
         # `session=abcdef-original-session-id`
         cookie_header = 'session={value}'.format(value=session_cookie.value)
+        self.assertEqual(c.get('/get', headers={'Cookie': cookie_header}).data, b'')
+
+        # Regeneration test
+        # Verify regeneration preserves data but gives us a new session id
+        self.assertEqual(c.post('/set', data={'value': '42'}).data, b'value set')
+        original_session_cookie = self._get_cookie_dict(c)['session']
+        c.post('/regenerate')
+        self.assertEqual(c.get('/get').data, b'42')
+        self.assertNotEqual(self._get_cookie_dict(c)['session'].value, original_session_cookie.value)
+
+        # Verify our original session was erased from the underlying store
+        # `session=abcdef-original-session-id`
+        print 'fetching', original_session_cookie.value
+        cookie_header = 'session={value}'.format(value=original_session_cookie.value)
         self.assertEqual(c.get('/get', headers={'Cookie': cookie_header}).data, b'')
 
     # def test_memcached_session(self):
