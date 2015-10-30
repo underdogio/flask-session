@@ -129,7 +129,6 @@ class RedisSessionInterface(SessionInterface):
 
     def regenerate(self, session):
         # Delete old session info
-        print 'deleting (regen)', session.sid
         self.redis.delete(self.key_prefix + session.sid)
 
         # Generate a new sid and mark the session as modified

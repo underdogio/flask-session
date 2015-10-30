@@ -72,7 +72,7 @@ class FlaskSessionTestCase(unittest.TestCase):
         # Verify our session was erased from the underlying store
         # `session=abcdef-original-session-id`
         cookie_header = 'session={value}'.format(value=session_cookie.value)
-        self.assertEqual(c.get('/get', headers={'Cookie': cookie_header}).data, b'')
+        self.assertEqual(app.test_client().get('/get', headers={'Cookie': cookie_header}).data, b'')
 
         # Regeneration test
         # Verify regeneration preserves data but gives us a new session id
@@ -86,7 +86,7 @@ class FlaskSessionTestCase(unittest.TestCase):
         # Verify our original session was erased from the underlying store
         # `session=abcdef-original-session-id`
         cookie_header = 'session={value}'.format(value=original_session_cookie.value)
-        self.assertEqual(c.get('/get', headers={'Cookie': cookie_header}).data, b'')
+        self.assertEqual(app.test_client().get('/get', headers={'Cookie': cookie_header}).data, b'')
 
     # def test_memcached_session(self):
     #     app = flask.Flask(__name__)
