@@ -6,6 +6,11 @@ from flask.ext.session import Session
 
 
 class FlaskSessionTestCase(unittest.TestCase):
+    def _get_cookie_dict(self, test_client):
+        return {
+            cookie.name: cookie
+            for cookie in test_client.cookie_jar
+        }
 
     # def test_null_session(self):
     #     app = flask.Flask(__name__)
@@ -54,9 +59,9 @@ class FlaskSessionTestCase(unittest.TestCase):
 
         # Destruction test
         self.assertEqual(c.post('/set', data={'value': '42'}).data, b'value set')
-        print c.cookie_jar
+        self.assertIn('session', self._get_cookie_dict(c))
         c.post('/destroy')
-        print c.cookie_jar
+        self.assertNotIn('session', self._get_cookie_dict(c))
         # self.assertEqual(c.get('/get').data, b'')
 
 
