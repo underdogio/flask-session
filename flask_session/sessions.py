@@ -124,7 +124,6 @@ class RedisSessionInterface(SessionInterface):
         return self.session_class(sid=sid)
 
     def destroy(self, session):
-        print 'deleting (destroy)', session.sid
         self.redis.delete(self.key_prefix + session.sid)
         session.sid = None
 
@@ -163,7 +162,6 @@ class RedisSessionInterface(SessionInterface):
         secure = self.get_cookie_secure(app)
         expires = self.get_expiration_time(app, session)
         val = self.serializer.dumps(dict(session))
-        print 'saving', session.sid
         self.redis.setex(self.key_prefix + session.sid, val,
                          total_seconds(app.permanent_session_lifetime))
         if self.use_signer:

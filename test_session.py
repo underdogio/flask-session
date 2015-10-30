@@ -54,8 +54,8 @@ class FlaskSessionTestCase(unittest.TestCase):
         def errorhandler_500(exc):
             raise exc
 
-        c = app.test_client()
         # Create, retrieve, delete tests
+        c = app.test_client()
         self.assertEqual(c.post('/set', data={'value': '42'}).data, b'value set')
         self.assertEqual(c.get('/get').data, b'42')
         c.post('/delete')
@@ -63,6 +63,7 @@ class FlaskSessionTestCase(unittest.TestCase):
 
         # Destruction test
         # Verify destruction works
+        c = app.test_client()
         self.assertEqual(c.post('/set', data={'value': '42'}).data, b'value set')
         session_cookie = self._get_cookie_dict(c)['session']
         c.post('/destroy')
@@ -75,6 +76,7 @@ class FlaskSessionTestCase(unittest.TestCase):
 
         # Regeneration test
         # Verify regeneration preserves data but gives us a new session id
+        c = app.test_client()
         self.assertEqual(c.post('/set', data={'value': '42'}).data, b'value set')
         original_session_cookie = self._get_cookie_dict(c)['session']
         c.post('/regenerate')
@@ -83,7 +85,6 @@ class FlaskSessionTestCase(unittest.TestCase):
 
         # Verify our original session was erased from the underlying store
         # `session=abcdef-original-session-id`
-        print 'fetching', original_session_cookie.value
         cookie_header = 'session={value}'.format(value=original_session_cookie.value)
         self.assertEqual(c.get('/get', headers={'Cookie': cookie_header}).data, b'')
 
