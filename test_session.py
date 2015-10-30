@@ -39,7 +39,7 @@ class FlaskSessionTestCase(unittest.TestCase):
             return 'value deleted'
         @app.route('/destroy', methods=['POST'])
         def destroy():
-            flask.session = None
+            app.session_interface.destroy(flask.session)
             return 'session destroyed'
         @app.errorhandler(500)
         def errorhandler_500(exc):
