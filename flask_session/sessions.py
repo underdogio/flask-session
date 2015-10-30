@@ -127,6 +127,17 @@ class RedisSessionInterface(SessionInterface):
         self.redis.delete(self.key_prefix + session.sid)
         session.sid = None
 
+    def regenerate(self, session):
+        # Delete old session info
+        self.redis.delete(self.key_prefix + session.sid)
+
+        # Generate a new sid and mark the session as modified
+        session.sid = self._generate_sid()
+        session.modified = True
+
+        # Session data will be preserved on the `session` dict
+        # `save_session` will take care of updating the cookie
+
     def save_session(self, app, session, response):
         domain = self.get_cookie_domain(app)
         path = self.get_cookie_path(app)
