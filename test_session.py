@@ -6,7 +6,7 @@ from flask.ext.session import Session
 
 
 class FlaskSessionTestCase(unittest.TestCase):
-    
+
     def test_null_session(self):
         app = flask.Flask(__name__)
         Session(app)
@@ -32,7 +32,7 @@ class FlaskSessionTestCase(unittest.TestCase):
             return 'value set'
         @app.route('/get')
         def get():
-            return flask.session['value']
+            return flask.session.get('value', '')
         @app.route('/delete', methods=['POST'])
         def delete():
             del flask.session['value']
@@ -42,8 +42,9 @@ class FlaskSessionTestCase(unittest.TestCase):
         self.assertEqual(c.post('/set', data={'value': '42'}).data, b'value set')
         self.assertEqual(c.get('/get').data, b'42')
         c.post('/delete')
-    
-    
+        self.assertEqual(c.get('/get').data, b'')
+
+
     def test_memcached_session(self):
         app = flask.Flask(__name__)
         app.config['SESSION_TYPE'] = 'memcached'
@@ -64,8 +65,8 @@ class FlaskSessionTestCase(unittest.TestCase):
         self.assertEqual(c.post('/set', data={'value': '42'}).data, b'value set')
         self.assertEqual(c.get('/get').data, b'42')
         c.post('/delete')
-    
-    
+
+
     def test_filesystem_session(self):
         app = flask.Flask(__name__)
         app.config['SESSION_TYPE'] = 'filesystem'
@@ -87,7 +88,7 @@ class FlaskSessionTestCase(unittest.TestCase):
         self.assertEqual(c.post('/set', data={'value': '42'}).data, b'value set')
         self.assertEqual(c.get('/get').data, b'42')
         c.post('/delete')
-    
+
     def test_mongodb_session(self):
         app = flask.Flask(__name__)
         app.config['SESSION_TYPE'] = 'mongodb'
