@@ -58,12 +58,16 @@ class FlaskSessionTestCase(unittest.TestCase):
         self.assertEqual(c.get('/get').data, b'')
 
         # Destruction test
+        # Verify destruction works
         self.assertEqual(c.post('/set', data={'value': '42'}).data, b'value set')
-        self.assertIn('session', self._get_cookie_dict(c))
+        session_cookie = self._get_cookie_dict(c)['session']
         c.post('/destroy')
         self.assertNotIn('session', self._get_cookie_dict(c))
-        # self.assertEqual(c.get('/get').data, b'')
 
+        # Verify our cookie was erased from the underlying store
+        # `session=abcdef-original-session-id`
+        cookie_header = 'session={value}'.format(value=session_cookie.value)
+        self.assertEqual(c.get('/get', headers={'Cookie': cookie_header}).data, b'')
 
     # def test_memcached_session(self):
     #     app = flask.Flask(__name__)
