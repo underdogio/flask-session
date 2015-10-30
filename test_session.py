@@ -108,8 +108,8 @@ class FlaskSessionTestCase(unittest.TestCase):
         self.assertEqual(c.post('/set', data={'value': '42'}).data, b'value set')
         self.assertEqual(c.get('/get').data, b'42')
         c.post('/delete')
-
-
+    
+    
     def test_filesystem_session(self):
         app = flask.Flask(__name__)
         app.config['SESSION_TYPE'] = 'filesystem'
@@ -131,7 +131,7 @@ class FlaskSessionTestCase(unittest.TestCase):
         self.assertEqual(c.post('/set', data={'value': '42'}).data, b'value set')
         self.assertEqual(c.get('/get').data, b'42')
         c.post('/delete')
-
+    
     def test_mongodb_session(self):
         app = flask.Flask(__name__)
         app.config['SESSION_TYPE'] = 'mongodb'
