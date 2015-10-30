@@ -126,6 +126,7 @@ class RedisSessionInterface(SessionInterface):
     def save_session(self, app, session, response):
         domain = self.get_cookie_domain(app)
         path = self.get_cookie_path(app)
+        print 'sup', not session, session
         if not session:
             if session.modified:
                 self.redis.delete(self.key_prefix + session.sid)
