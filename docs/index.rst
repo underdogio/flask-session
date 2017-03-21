@@ -1,7 +1,7 @@
 Flask-Session
 =============
 
-.. module:: flask.ext.session
+.. module:: flask_session
 
 Welcome to Flask-Session's documentation.  Flask-Session is an extension for
 `Flask`_ that adds support for Server-side ``Session`` to your application.
@@ -41,7 +41,7 @@ The ``Session`` instance is not used for direct access, you should always use
 :class:`flask.session`::
     
     from flask import Flask, session
-    from flask.ext.session import Session
+    from flask_session import Session
 
     app = Flask(__name__)
     # Check Configuration section for more details
@@ -75,11 +75,10 @@ modify them at runtime.
 
 We are not supplying something like ``SESSION_REDIS_HOST`` and 
 ``SESSION_REDIS_PORT``, if you want to use the ``RedisSessionInterface``,
-you should configure ``SESSION_REDIS`` to your own ``redis.Redis`` instance,
-or ``redis.StrictRedis`` if you prefer so.  This gives you more flexibility,
-like maybe you want to use the same ``redis.Redis`` instance for cache purpose
-too, then you do not need to keep two ``redis.Redis`` instance in the same
-process.
+you should configure ``SESSION_REDIS`` to your own ``redis.Redis`` instance.
+This gives you more flexibility, like maybe you want to use the same
+``redis.Redis`` instance for cache purpose too, then you do not need to keep
+two ``redis.Redis`` instance in the same process.
 
 The following configuration values are builtin configuration values within
 Flask itself that are related to session.  **They are all understood by 
@@ -120,6 +119,8 @@ A list of configuration keys also understood by the extension:
                               - **filesystem**: FileSystemSessionInterface
                               - **mongodb**: MongoDBSessionInterface
                               - **sqlalchemy**: SqlAlchemySessionInterface
+``SESSION_PERMANENT``         Whether use permanent session or not, default
+                              to be ``True``
 ``SESSION_USE_SIGNER``        Whether sign the session cookie sid or not,
                               if set to ``True``, you have to set
                               :attr:`flask.Flask.secret_key`, default to be
@@ -145,7 +146,7 @@ A list of configuration keys also understood by the extension:
                               "flask_session"
 ``SESSION_MONGODB_COLLECT``   The MongoDB collection you want to use, default
                               "sessions"
-``SESSION_SQLALCHEMY``        A ``flask.ext.sqlalchemy.SQLAlchemy`` instance
+``SESSION_SQLALCHEMY``        A ``flask_sqlalchemy.SQLAlchemy`` instance
                               whose database connection URI is configured
                               using the ``SQLALCHEMY_DATABASE_URI`` parameter
 ``SESSION_SQLALCHEMY_TABLE``  The name of the SQL table you want to use,
@@ -156,7 +157,7 @@ Basically you only need to configure ``SESSION_TYPE``.
 
 .. note::
     
-    All non-null sessions in Flask-Session are permanent.
+    By default, all non-null sessions in Flask-Session are permanent.
 
 .. versionadded:: 0.2
 
@@ -229,7 +230,7 @@ API
 .. autoclass:: Session
    :members: init_app
 
-.. autoclass:: flask.ext.session.sessions.ServerSideSession
+.. autoclass:: flask_session.sessions.ServerSideSession
    
    .. attribute:: sid
        

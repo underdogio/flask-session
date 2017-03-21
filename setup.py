@@ -17,7 +17,7 @@ from setuptools import setup
 
 setup(
     name='Flask-Session',
-    version='0.3-dev',
+    version='0.3.1',
     url='https://github.com/fengsp/flask-session',
     license='BSD',
     author='Shipeng Feng',
@@ -37,7 +37,7 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
-        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ]
